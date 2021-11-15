@@ -1,20 +1,21 @@
-.Desktop{
+.MainPane{
     background-color: inherit;
-    width: 85vw;
+    width: 85%;
     height: 100vh;
     float: right;
 }
 
-.Desktop-VideoPreview{
-    width: 72%;
+.MainPane-VideoPlayer{
+    width: 90%;
+    height: 70%;
     margin: auto;
     margin-top: auto;
     margin-bottom: auto;
-    background-color: gray;    
 }
 
-.Desktop-Timeline{
+.MainPane-UnderStrip{
     width: 100%;
+    height: 30%;
     margin: auto;
     background-color: gray;    
 }

@@ -1,4 +1,5 @@
 import "../styles/LeftPane.css";
+import React from "react"
 
 function LeftPane() {
     return (
