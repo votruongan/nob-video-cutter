@@ -1,9 +1,14 @@
-import "../styles/LeftPane.css";
 import React from "react"
 
+const style = {
+    width: "15%",
+    height: "100vh",
+    float: "left",
+    backgroundColor: "#818ea7",
+}
 function LeftPane() {
     return (
-        <div className="LeftPane">
+        <div style={style}>
         </div>
     );
 }

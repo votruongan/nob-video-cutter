@@ -1,34 +1,32 @@
-import "../styles/MainPane.css"
 import React from "react"
 
 class MainPaneVideoPlayer extends React.Component {
     constructor(props) {
         super(props);
+        this.videoPlayer = React.createRef()
         this.state = {
-            videoPlayer: null,
             videoLength: 0,
         };
     }
 
     render() {
         return (
-            <div className="MainPane-VideoPlayer" >
-                <video src={this.props.path} style={{ height: "90%" }} id="mainVideoPlayer"></video>
-                <p>{this.props.playTime}</p>
+            <div>
+                <video ref={this.videoPlayer} src={this.props.path} style={{ height: "70vh" }}></video>
+                <p className="text-white">{this.props.playTime}</p>
             </div>
         );
     }
 
     componentDidUpdate(){
-        const vp = document.getElementById('mainVideoPlayer');
+        const {current: vp} = this.videoPlayer;
         if (this.state.videoLength !== vp.duration){
             this.setState({
-                videoPlayer: vp,
                 videoLength: vp.duration,
             })
             return;
         }
-        vp.currentTime = this.props.playTime / 1000 * this.state.videoLength;
+        vp.currentTime = this.props.playTime / 10000 * this.state.videoLength;
     }
 }
 

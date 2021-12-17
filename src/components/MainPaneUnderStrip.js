@@ -1,5 +1,9 @@
-import "../styles/MainPane.css"
 import React from "react"
+import TimeLineManager from "./UnderStrip/TimeLineManager";
+
+const styles = {
+    height: "17%",
+}
 
 class MainPaneUnderStrip extends React.Component {
     constructor(props) {
@@ -8,19 +12,15 @@ class MainPaneUnderStrip extends React.Component {
         this.state = {};
     }
 
-    handleSeekPlayTime(event) {
-        const newTime = event.target.value;
-        this.props.onChangePlayTime(newTime);
+    handleSeekPlayTime(toTime) {
+        this.props.onChangePlayTime(toTime);
     }
 
     render() {
         return (
-            <div className="MainPane-UnderStrip">
-                <input type="range" style={{ marginTop: "32px", }}
-                    defaultValue="0"
-                    min="0" max="1000"
-                    onInput={this.handleSeekPlayTime}
-                />
+            <div style={styles}>
+                <TimeLineManager
+                    onChangeDisplayFrame={this.handleSeekPlayTime}/>
             </div>
         );
     }
