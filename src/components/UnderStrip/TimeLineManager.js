@@ -18,18 +18,62 @@ class TimeLineManager extends React.Component {
         this.state = {
             currentTime: 500,
             stops: [],
+            currentStopId: 0,
         };
+    }
+
+    get currentStopName(){
+        return `stop-${this.state.currentStopId}`
     }
 
     handleSeekPlayTime = event => {
         const newTime = event.target.value;
-        this.state.stops.push({id: newTime, position: newTime});
         this.props.onChangeDisplayFrame(newTime);
     }
 
+    handleNewStopStart = event => {
+        const newPosition = event.target.value;
+        if (this.state[this.currentStopName] && this.state[this.currentStopName].start){
+            this.setState({
+                [this.currentStopName]: { 
+                    ...this.state[this.currentStopName], end: newPosition,
+                }
+            })
+        } else {
+            this.setState({
+                [this.currentStopName]: { start: newPosition },
+                stops: [...this.state.stops, this.currentStopName]
+            })
+        }
+        this.props.onChangeDisplayFrame(newPosition);
+    }
+    handleFinishSetStop = event => {
+        console.log(this.state.currentStopId)
+        this.setState({
+            [this.currentStopName]: { 
+                ...this.state[this.currentStopName], end: event.target.value,
+                isAdjusting: false,
+            },
+            currentStopId: this.state.currentStopId + 1,
+        })
+        this.props.onChangeDisplayFrame(event.target.value);
+    }
+    handleCancelSetStop = event => {
+        this.setState({
+            [this.currentStopName]: {},
+        })
+    }
+
+
     render() {
-        const stopList = this.state.stops.map((stopObj, i)=>{
-            return <TimeLineStop key={i} initialTime={stopObj.position}/>
+        const stopList = []
+        this.state.stops.forEach((stopName) => {
+            const {start, end, isAdjusting} = this.state[stopName]
+            console.log(start,end)
+            if (start)
+                stopList.push(<TimeLineStop key={`${stopName}-start`} initialTime={start} isAdjusting={isAdjusting}/>)
+            if (end)
+                stopList.push(<TimeLineStop key={`${stopName}-end`} initialTime={end} isEndStop={true} isAdjusting={isAdjusting} />)
         })
         return (
             <div style={styles.container}>
@@ -37,7 +81,9 @@ class TimeLineManager extends React.Component {
                     defaultValue={this.state.currentTime}
                     min="0" max="10000"
                     style={styles.dimension}
-                    onInput={this.handleSeekPlayTime}
+                    onMouseLeave={this.handleCancelSetStop}
+                    onMouseUp={this.handleFinishSetStop}
+                    onInput={this.handleNewStopStart}
                 />
                 {stopList}
             </div>

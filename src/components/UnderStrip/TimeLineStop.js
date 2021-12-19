@@ -7,21 +7,39 @@ const BASE = {
 
 const BASE_STYLE = {
     position: 'absolute',
-    height: "17.2%",
-    top: "77.5%",
+    width: "1vw",
+    height: "17vh",
+    top: "72.3%",
+    backgroundImage: 'url("stop.svg")',
+    backgroundRepeat: "no-repeat", 
+}
+
+const BASE_START_STYLE = {
+    ...BASE_STYLE,
+    transform: "rotateY(60deg)",
+}
+
+const BASE_END_STYLE = {
+    ...BASE_STYLE,
+    transform: "rotateY(120deg)",
 }
 
 class TimeLineStop extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            timeChanged: false,
+            oldInitialTime: 0,
+            readyToChange: true,
             currentTime: -1,
             styles: {
-                ...BASE_STYLE,
+                ...this.baseStyle,
                 left: "19%",
             },
         };
+    }
+
+    get baseStyle(){
+        return this.props.isEndStop? BASE_END_STYLE : BASE_START_STYLE
     }
 
     handleSeekPlayTime = event => {
@@ -30,31 +48,23 @@ class TimeLineStop extends React.Component {
     }
 
     render() {
-        console.log(this.state.styles)
+        let curTime = parseInt(this.props.initialTime);
+        if (this.props.initialTime !== this.state.oldInitialTime) {
+            if (this.props.isEndStop) console.log("new end: ", this.props.initialTime)
+            this.setState({
+                currentTime: curTime,
+                styles: { ...this.baseStyle, left: this.getNewLeft(curTime) },
+                oldInitialTime: this.props.initialTime,
+            })
+        }
         return (
-            <img src="stop.svg" alt="stop" style={this.state.styles} />
+            <div src="stop.svg" alt="stop" style={this.state.styles} />
         );
     }
 
     getNewLeft(position) {
         const res = Math.round(BASE.minLeft + position / 10000 * (BASE.maxLeft - BASE.minLeft)) + "%"
-        console.log(position, res)
         return res;
-    }
-
-    componentDidMount() {
-        this.componentDidUpdate()
-    }
-
-    componentDidUpdate() {
-        let curTime = this.state.currentTime < 0 ? parseInt(this.props.initialTime) : this.state.currentTime;
-        if (this.state.timeChanged) {
-            this.setState({
-                currentTime: curTime,
-                timeChanged: false,
-                styles: { ...BASE_STYLE, left: this.getNewLeft(curTime) },
-            })
-        }
     }
 }
 

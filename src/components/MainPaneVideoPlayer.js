@@ -12,7 +12,7 @@ class MainPaneVideoPlayer extends React.Component {
     render() {
         return (
             <div>
-                <video ref={this.videoPlayer} src={this.props.path} style={{ height: "70vh" }}></video>
+                <video ref={this.videoPlayer} src={this.props.path} style={{ width: "90vw", maxHeight: "65vh" }}></video>
                 <p className="text-white">{this.props.playTime}</p>
             </div>
         );
