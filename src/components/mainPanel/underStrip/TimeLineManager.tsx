@@ -5,7 +5,8 @@ import { TIMELINE_MAXIMUM_INTERVAL, TimeLineStopData } from 'models/TimeLineMode
 
 const styles: CSSProperties = {
     width: "auto",
-    height: "100%"
+    height: "100%",
+    background: `linear-gradient(0deg, rgba(2,0,36,1) 0%, rgba(9,9,121,0.12) 40%, rgba(0,212,255,0.1) 100%)`,
 }
 
 const inputStyles: CSSProperties = {
@@ -20,66 +21,75 @@ interface TimeLineManagerProps {
     onChangeDisplayFrame: (t: number) => void;
 }
 
-function TimeLineManager (props: TimeLineManagerProps) {
-    let [currentTime, setCurrentTime] = useState(500);
+function getPosition(event: React.FormEvent<HTMLInputElement>) {
+    const rawPosition = event.currentTarget.value;
+    const newPosition = parseInt(rawPosition)
+    return newPosition
+}
+
+function TimeLineManager(props: TimeLineManagerProps) {
+    let [anchorStart, setAnchorStart] = useState(-1);
     let [currentStop, setCurrentStop] = useState<TimeLineStopData>({});
     let [currentStopName, setCurrentStopName] = useState("stop-1");
+    let [autoIncrease, setAutoIncease] = useState(2);
 
-    const handleNewStopStart: React.FormEventHandler<HTMLInputElement>  = (event) => {
-        const rawPosition = event.currentTarget.value;
-        const newPosition = parseInt(rawPosition)
+
+    const handleNewMousePosition: React.FormEventHandler<HTMLInputElement> = (event) => {
+        const newPosition = getPosition(event)
+        if (anchorStart < 0) return setAnchorStart(newPosition);
         if (currentStop.start) {
-            setCurrentStop({
-                start: currentStop.start,
-                end: newPosition
-            })
+            if (currentStop.start > newPosition) {
+                setCurrentStop({
+                    start: newPosition,
+                    end: anchorStart
+                })
+            } else {
+                setCurrentStop({
+                    start: anchorStart,
+                    end: newPosition
+                })
+            }
         } else {
             setCurrentStop({
-                start: newPosition,
+                start: anchorStart,
             })
+            setCurrentStopName(`stop-${autoIncrease}`)
         }
         console.log(currentStop)
         props.onChangeDisplayFrame(newPosition);
     }
 
-    const handleFinishSetStop: React.FormEventHandler<HTMLInputElement>  = (event) => {
-        // const rawPosition = event.currentTarget.value;
-        // const newPosition = parseInt(rawPosition);
-        // setCurrentStop({
-        //     start: newPosition,
-        //     end: newPosition
-        // })
-        // props.onAllStopsChanged(props.allStops.set(
-        //     currentStopName,
-        //     currentStop
-        // ))
-        // props.onChangeDisplayFrame(newPosition);
-        setCurrentStop({})
+    const handleFinishSetStop: React.FormEventHandler<HTMLInputElement> = (event) => {
+        setAutoIncease(++autoIncrease)
+        props.onAllStopsChanged(props.allStops.set(
+            currentStopName,
+            currentStop
+        ))
+        handleCancelSetStop(event)
     }
 
-    const handleCancelSetStop: React.FormEventHandler<HTMLInputElement>  = (event) => {
+    const handleCancelSetStop: React.FormEventHandler<HTMLInputElement> = () => {
+        setAnchorStart(-1)
         setCurrentStop({})
     }
 
 
     const stopList: JSX.Element[] = []
     props.allStops.forEach((stopData, stopName) => {
-        const {start, end} = stopData
-        console.log(start,end)
+        const { start, end } = stopData
+        console.log(stopName, start, end)
         if (start)
-            stopList.push(<TimeLineStop key={`${stopName}-start`} initialTime={start}/>)
+            stopList.push(<TimeLineStop key={`${stopName}-start`} initialTime={start} />)
         if (end)
             stopList.push(<TimeLineStop key={`${stopName}-end`} initialTime={end} isEndStop={true} />)
     })
     return (
         <div style={styles}>
             <input type="range" id="timeline-wrapper"
-                defaultValue={currentTime}
                 min="0" max={`${TIMELINE_MAXIMUM_INTERVAL}`}
                 style={inputStyles}
-                onMouseLeave={handleCancelSetStop}
                 onMouseUp={handleFinishSetStop}
-                onInput={handleNewStopStart}
+                onInput={handleNewMousePosition}
             />
             {stopList}
         </div>

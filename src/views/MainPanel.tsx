@@ -1,5 +1,5 @@
-import MainPaneUnderStrip from "components/mainPanel/MainPanelUnderStrip";
-import MainPaneVideoPlayer from "components/mainPanel/MainPanelVideoPlayer";
+import MainPanelUnderStrip from "components/mainPanel/MainPanelUnderStrip";
+import MainPanelVideoPlayer from "components/mainPanel/MainPanelVideoPlayer";
 import React, { CSSProperties, useState } from "react"
 import { TimeLineStopData } from 'models/TimeLineModels';
 
@@ -22,12 +22,12 @@ function MainPanel(props: MainPanelProps) {
 
     return (
         <div style={containerStyles}>
-            <MainPaneVideoPlayer
+            <MainPanelVideoPlayer
                 path={videoPath}
                 playTime={playerPeekTime}
             />
 
-            <MainPaneUnderStrip
+            <MainPanelUnderStrip
                 allStops={props.allStops}
                 onAllStopsChanged={props.onAllStopsChanged}
                 onChangePlayTime={setPlayerPeekTime} />

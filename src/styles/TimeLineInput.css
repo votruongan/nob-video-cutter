@@ -10,8 +10,7 @@
     height: 100%;
     cursor: pointer;
     background: transparent;
-    border-radius: 4px;
-    border: 2px solid #B280FE;
+    border: 1px solid #B280FE;
   }
   #timeline-wrapper::-webkit-slider-thumb {
     height: 30px;

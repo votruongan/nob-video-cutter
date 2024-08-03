@@ -15,6 +15,15 @@ interface MainPaneVideoPlayerProps {
     playTime: number,
 }
 
+function floatToTimeDisplay(value: number): string {
+    const seconds = Math.floor(value)
+    const localMiliSecs = Math.floor(value * 1000 % 1000)
+    const localSecs = Math.floor(seconds % 60)
+    const localMinutes = Math.floor(seconds / 60)
+    const localHours = Math.floor(seconds / 3600)
+    return `${localHours}:${localMinutes}:${localSecs}.${localMiliSecs}`
+}
+
 function MainPanelVideoPlayer(props: MainPaneVideoPlayerProps) {
     let [videoLength, setVideoLength] = useState(0);
     let videoPlayerRef = useRef<HTMLVideoElement>(null)
@@ -32,7 +41,9 @@ function MainPanelVideoPlayer(props: MainPaneVideoPlayerProps) {
     return (
         <div style={styles}>
             <video ref={videoPlayerRef} src={props.path} style={{ width: "90%", maxHeight: "65vh" }}></video>
-            <p className="text-white">{props.playTime}</p>
+            <p style={{color: "whitesmoke"}}>
+                {floatToTimeDisplay(props.playTime / TIMELINE_MAXIMUM_INTERVAL * videoLength)}
+                / {floatToTimeDisplay(videoLength)}</p>
         </div>
     );
 }

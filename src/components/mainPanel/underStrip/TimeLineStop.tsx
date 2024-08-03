@@ -1,28 +1,27 @@
 import React, { CSSProperties } from "react";
 import {Property} from "csstype";
+import { TIMELINE_MAXIMUM_INTERVAL } from "models/TimeLineModels";
 
 const BASE = {
-    minLeft: 19,
-    maxLeft: 95,
+    minLeft: 15,
+    maxLeft: 99.5,
 }
 
 const BASE_STYLE: CSSProperties = {
     position: "absolute",
-    width: "1vw",
-    height: "17vh",
-    top: "72.3%",
+    width: "0.5vw",
+    height: "30vh",
+    top: "70%",
     backgroundImage: 'url("stop.svg")',
     backgroundRepeat: "no-repeat", 
 }
 
 const BASE_START_STYLE: CSSProperties = {
     ...BASE_STYLE,
-    transform: "rotateY(60deg)",
 }
 
 const BASE_END_STYLE: CSSProperties = {
     ...BASE_STYLE,
-    transform: "rotateY(120deg)",
 }
 
 interface TimeLineStopProps {
@@ -31,7 +30,7 @@ interface TimeLineStopProps {
 }
   
 function getNewLeftStyle(position: number) {
-    const res = Math.round(BASE.minLeft + position / 10000 * (BASE.maxLeft - BASE.minLeft)) + "%"
+    const res = BASE.minLeft + position / TIMELINE_MAXIMUM_INTERVAL * (BASE.maxLeft - BASE.minLeft) + "%"
     return res;
 }
 
@@ -45,7 +44,7 @@ function TimeLineStop(props: TimeLineStopProps) {
     const computedStyle = { ...baseStyle, left: getNewLeftStyle(props.initialTime) }
 
     return (
-        <img src="stop.svg" alt="stop" style={computedStyle} />
+        <img src="stop.svg" draggable="false" alt="stop" style={computedStyle} />
     );
 
 }

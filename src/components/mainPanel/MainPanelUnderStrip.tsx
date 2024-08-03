@@ -6,7 +6,6 @@ const styles: CSSProperties = {
     width: "100%",
     height: "30%",
     margin: "auto",
-    backgroundColor: "gray",
 }
 
 interface MainPanelUnderStripProps {
