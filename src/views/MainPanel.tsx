@@ -1,35 +1,41 @@
 import MainPanelUnderStrip from "components/mainPanel/MainPanelUnderStrip";
 import MainPanelVideoPlayer from "components/mainPanel/MainPanelVideoPlayer";
 import React, { CSSProperties, useState } from "react"
-import { TimeLineStopData } from 'models/TimeLineModels';
+import { TimeLineCutRange } from 'models/TimeLineModels';
 
 const containerStyles: CSSProperties = {
     "backgroundColor": "inherit",
-    width: "85%",
+    width: "90%",
     height: "100vh",
     float: "right",
 }
 
 interface MainPanelProps {
-    allStops: Map<string, TimeLineStopData>
-    onAllStopsChanged: (m: Map<string, TimeLineStopData>) => void
+    allCutRanges: Map<string, TimeLineCutRange>
+    videoPath: string,
+    videoLength: number,
+    onAllCutRangesChanged: (m: Map<string, TimeLineCutRange>) => void
 }
 
 
 function MainPanel(props: MainPanelProps) {
-    let [playerPeekTime, setPlayerPeekTime] = useState(0)
-    let [videoPath, setVideoPath] = useState("./sample.mp4")
+    const [playerPeekTime, setPlayerPeekTime] = useState(0)
+
+    const isEmptyVideo = props.videoPath === ""
 
     return (
         <div style={containerStyles}>
             <MainPanelVideoPlayer
-                path={videoPath}
+                path={props.videoPath}
                 playTime={playerPeekTime}
+                videoLength={props.videoLength}
+                isEmptyPlayback={isEmptyVideo}
             />
 
             <MainPanelUnderStrip
-                allStops={props.allStops}
-                onAllStopsChanged={props.onAllStopsChanged}
+                allCutRanges={props.allCutRanges}
+                isEmptyVideo={isEmptyVideo}
+                onAllCutRangesChanged={props.onAllCutRangesChanged}
                 onChangePlayTime={setPlayerPeekTime} />
         </div>
     );

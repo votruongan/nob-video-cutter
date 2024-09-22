@@ -1,5 +1,6 @@
+import GrayText from "components/common/GrayText";
 import { TIMELINE_MAXIMUM_INTERVAL } from "models/TimeLineModels";
-import React, { CSSProperties, useRef, useState } from "react"
+import { CSSProperties, useEffect, useRef } from "react"
 
 
 const styles: CSSProperties = {
@@ -13,6 +14,8 @@ const styles: CSSProperties = {
 interface MainPaneVideoPlayerProps {
     path: string,
     playTime: number,
+    videoLength: number,
+    isEmptyPlayback: boolean,
 }
 
 function floatToTimeDisplay(value: number): string {
@@ -25,27 +28,36 @@ function floatToTimeDisplay(value: number): string {
 }
 
 function MainPanelVideoPlayer(props: MainPaneVideoPlayerProps) {
-    let [videoLength, setVideoLength] = useState(0);
     let videoPlayerRef = useRef<HTMLVideoElement>(null)
-
-    const videoPlayer = videoPlayerRef.current;
-
-    if (videoPlayer){
-        if (videoLength !== videoPlayer.duration){
-            setVideoLength(videoPlayer.duration)
-        } else {
-            videoPlayer.currentTime = props.playTime / TIMELINE_MAXIMUM_INTERVAL * videoLength;
+    const { videoLength } = props
+    useEffect(() => {
+        const videoPlayer = videoPlayerRef.current;
+        if (videoPlayer) {
+            videoPlayer.currentTime = props.playTime / TIMELINE_MAXIMUM_INTERVAL * props.videoLength;
         }
-    }
+    });
+
+    const bodyContent = 
+        (props.isEmptyPlayback)
+        ? (<GrayText
+            text={`Click "Import" to specify input video.`}
+        />)
+        : (<>
+            <video ref={videoPlayerRef} src={props.path} style={{ width: "90%", maxHeight: "65vh" }}></video>
+            <div style={{display: "flex", justifyContent: "center"}}>
+                <p style={{ color: "whitesmoke", marginRight: "8px"}}>Current frame: </p>
+                <p style={{ color: "whitesmoke" }}>
+                    {floatToTimeDisplay(props.playTime / TIMELINE_MAXIMUM_INTERVAL * videoLength)}
+                    / {floatToTimeDisplay(videoLength)}</p>
+            </div>
+        </>)
 
     return (
         <div style={styles}>
-            <video ref={videoPlayerRef} src={props.path} style={{ width: "90%", maxHeight: "65vh" }}></video>
-            <p style={{color: "whitesmoke"}}>
-                {floatToTimeDisplay(props.playTime / TIMELINE_MAXIMUM_INTERVAL * videoLength)}
-                / {floatToTimeDisplay(videoLength)}</p>
+            {bodyContent}
         </div>
     );
+
 }
 
 export default MainPanelVideoPlayer;
