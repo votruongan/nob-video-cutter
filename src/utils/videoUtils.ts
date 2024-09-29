@@ -31,7 +31,7 @@ const VideoUtils = {
 
   roundTo2Decimal: (float: number | undefined): number => {
     if (!float) return 0
-    return Math.floor(float * 10) / 10
+    return Math.floor(float * 100) / 100
   },
 
   relativeToAbsoluteTimePointString: (relativeToMaxValue: number, maxVideoLength: number) => {
@@ -42,8 +42,31 @@ const VideoUtils = {
     return `${minutes}:${VideoUtils.roundTo2Decimal(seconds)}`
   },
 
-  cutVideoFile: async (ffmpegInstance: FFmpeg, inputPath: string, unsortedRanges: TimeLineCutRange[], videoLength: number, outputPath: string) => {
-    if (unsortedRanges.length === 0) {return console.log("No range to cut")}
+  cutVideoFileOneRange: async (ffmpegInstance: FFmpeg, inputPath: string, unsortedRanges: TimeLineCutRange[], videoLength: number, outputPath: string) => {
+    if (unsortedRanges.length === 0) { return console.log("No range to cut") }
+    // const sortedRanges = unsortedRanges.sort((rangeA, rangeB) => {
+    //   const startA = rangeA.start ? rangeA.start : 0
+    //   const startB = rangeB.start ? rangeB.start : 0
+    //   return startA > startB ? 1 : (startA < startB ? -1 : 0)
+    // })
+    let startTime = 0, endTime = 0;
+    const filterRanges = unsortedRanges.map(range => {
+      const start = (range.start ? range.start : 0) / TIMELINE_MAXIMUM_INTERVAL * videoLength
+      const end = (range.end ? range.end : 0) / TIMELINE_MAXIMUM_INTERVAL * videoLength
+      startTime = VideoUtils.roundTo2Decimal(start)
+      endTime = VideoUtils.roundTo2Decimal(end)
+    })
+    await ffmpegInstance.exec([
+      "-i", inputPath,
+      "-ss", startTime.toString(),
+      "-t", endTime.toString(),
+      "-c:v", "copy",
+      "-c:a", "copy",
+      outputPath
+    ])
+  },
+  cutVideoFileWithRanges: async (ffmpegInstance: FFmpeg, inputPath: string, unsortedRanges: TimeLineCutRange[], videoLength: number, outputPath: string) => {
+    if (unsortedRanges.length === 0) { return console.log("No range to cut") }
     const sortedRanges = unsortedRanges.sort((rangeA, rangeB) => {
       const startA = rangeA.start ? rangeA.start : 0
       const startB = rangeB.start ? rangeB.start : 0

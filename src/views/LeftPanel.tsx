@@ -23,12 +23,13 @@ interface LeftPanelProps {
     videoLength: number,
     allCutRanges: Map<string, TimeLineCutRange>,
     onSelectNewFile: (selected: File) => void,
+    displayLoading: (isLoading: boolean, message?: string) => void,
 }
 
 
 export default function LeftPane(props: LeftPanelProps) {
     const importRef = useRef<HTMLInputElement>(null)
-
+    const { displayLoading } = props
 
     const importClickHandler: React.MouseEventHandler<HTMLButtonElement> = () => {
         console.log("importClickHandler")
@@ -38,11 +39,13 @@ export default function LeftPane(props: LeftPanelProps) {
     const handleImportFile: ChangeEventHandler<HTMLInputElement> = async (event) => {
         const file = event.target.files?.item(0)
         console.log(file)
+        displayLoading(true, "Writing file")
         if (!file) return;
         await file.arrayBuffer().then((buffer) => {
             props.ffmpeg.writeFile(file.name, new Uint8Array(buffer))
         })
         props.onSelectNewFile(file)
+        displayLoading(false)
     }
 
     const handleExportFile: React.MouseEventHandler<HTMLButtonElement> = async (event) => {
@@ -52,16 +55,36 @@ export default function LeftPane(props: LeftPanelProps) {
 
         console.log("cutting - START")
 
-        await props.ffmpeg.createDir('./output');
+        displayLoading(true, "Preparing")
 
-        await VideoUtils.cutVideoFile(
-            props.ffmpeg,
-            videoName,
-            ranges,
-            props.videoLength,
-            `./output/output.mp4`,
-        )
-        if (ranges.length > 0){
+        props.ffmpeg.on("progress", ({ progress, time }) => {
+            if (progress > 0.05) {
+                displayLoading(true, `Processing... ${VideoUtils.roundTo2Decimal(progress * 100)}%`)
+            }
+        })
+        if (ranges.length > 1) {
+            await VideoUtils.cutVideoFileWithRanges(
+                props.ffmpeg,
+                videoName,
+                ranges,
+                props.videoLength,
+                `./output/output.mp4`,
+            )
+            displayLoading(true, "Downloading")
+            await VideoUtils.downloadVideo(
+                props.ffmpeg,
+                `./output/output.mp4`,
+                `trimmed_${videoName}`
+            )
+        } else if (ranges.length == 1) {
+            await VideoUtils.cutVideoFileOneRange(
+                props.ffmpeg,
+                videoName,
+                ranges,
+                props.videoLength,
+                `./output/output.mp4`,
+            )
+            displayLoading(true, "Downloading")
             await VideoUtils.downloadVideo(
                 props.ffmpeg,
                 `./output/output.mp4`,
@@ -74,8 +97,8 @@ export default function LeftPane(props: LeftPanelProps) {
                 `trimmed_${videoName}`
             )
         }
-
         console.log("cutting - DONE!")
+        displayLoading(false)
     }
 
     return (
