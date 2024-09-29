@@ -1,17 +1,17 @@
 {
   "files": {
-    "main.css": "/nob-video-cutter/static/css/main.02f5fee5.css",
-    "main.js": "/nob-video-cutter/static/js/main.47bfb992.js",
+    "main.css": "/nob-video-cutter/static/css/main.9565d714.css",
+    "main.js": "/nob-video-cutter/static/js/main.8839ba5f.js",
     "static/js/726.f458fb75.chunk.js": "/nob-video-cutter/static/js/726.f458fb75.chunk.js",
     "static/js/453.8299120c.chunk.js": "/nob-video-cutter/static/js/453.8299120c.chunk.js",
     "index.html": "/nob-video-cutter/index.html",
-    "main.02f5fee5.css.map": "/nob-video-cutter/static/css/main.02f5fee5.css.map",
-    "main.47bfb992.js.map": "/nob-video-cutter/static/js/main.47bfb992.js.map",
+    "main.9565d714.css.map": "/nob-video-cutter/static/css/main.9565d714.css.map",
+    "main.8839ba5f.js.map": "/nob-video-cutter/static/js/main.8839ba5f.js.map",
     "726.f458fb75.chunk.js.map": "/nob-video-cutter/static/js/726.f458fb75.chunk.js.map",
     "453.8299120c.chunk.js.map": "/nob-video-cutter/static/js/453.8299120c.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.02f5fee5.css",
-    "static/js/main.47bfb992.js"
+    "static/css/main.9565d714.css",
+    "static/js/main.8839ba5f.js"
   ]
 }
